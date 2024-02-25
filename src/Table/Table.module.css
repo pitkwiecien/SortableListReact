@@ -11,4 +11,5 @@ td, th{
 th {
     background-color: yellow;
     font-weight: bold;
+    cursor: pointer;
 }
