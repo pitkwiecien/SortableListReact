@@ -1,16 +1,22 @@
-import './Table.module.css'
+import style from './Table.module.css'
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
+import {type} from "@testing-library/user-event/dist/type";
 
 export default function Table(props) {
     const [values, setValues] = useState(props.values);
     const [lastSortedBy, setLastSortedBy] = useState(0)
     const [lastSortedAsc, setLastSortedAsc] = useState(false)
+    const [editing, setEditing] = useState([-1, -1])
 
     useEffect(() => {
         console.log("lastSortedAsc: " + (lastSortedAsc ? "Yes" : "No"));
         console.log("lastSortedBy: " + lastSortedBy);
     }, [lastSortedAsc, lastSortedBy]);
+
+    useEffect(() => {
+        console.log("editing: " + editing)
+    }, [editing])
 
 
     const handleHeaderClicked = (index) => {
@@ -34,12 +40,38 @@ export default function Table(props) {
         }
     }
 
+    const handleChange = (e, colIndex, index) => {
+        setValues((prevValues) => {
+            prevValues[index][colIndex] = e.target.value
+            return prevValues
+        })
+    }
+
+    const editField = (colIndex, index) => {
+        setEditing([colIndex, index])
+        setTimeout(() => {
+            const activeInput = document.getElementById("activeInput");
+            if (activeInput) {
+                activeInput.focus();
+            }
+        }, 0);
+    }
+
+    const stopEditing = (e, colIndex, index) => {
+        console.log("a")
+        setEditing([-1, -1])
+    }
+
     return(
         <table>
             <thead>
                 <tr>
                     {props.headers.map((elem, index) => {
-                        return <th key={`header-${index}`} onClick={() => handleHeaderClicked(index)}>{elem}</th>
+                        return <th
+                            key={`header-${index}`}
+                            onClick={() => handleHeaderClicked(index)}>
+                            {elem}
+                        </th>
                     })}
                 </tr>
             </thead>
@@ -50,9 +82,30 @@ export default function Table(props) {
                         const cycleSpot = cycles % props.colours.length
                         return props.colours[cycleSpot]
                     }
-                    return <tr key={`row-${index}`} style={{backgroundColor: getBackgroundColour()}}>
+                    return <tr
+                        key={`row-${index}`}
+                        style={{backgroundColor: getBackgroundColour()}}>
                         {row.map((col, colIndex) => {
-                            return <td key={`cell-${index}-${colIndex}`}>{col}</td>
+                            // noinspection JSVoidFunctionReturnValueUsed
+                            return (
+                                <td key={`cell-${index}-${colIndex}`}>
+                                    <div onDoubleClick={(e) => { editField(colIndex, index) }}
+                                         onBlur={(e) => stopEditing(e, colIndex, index)}>
+                                        {editing[0] === colIndex && editing[1] === index ? (
+                                            <input
+                                                type="text"
+                                                defaultValue={col}
+                                                onChange={(e) => handleChange(e, colIndex, index)}
+                                                contentEditable={true}
+                                                id={"activeInput"}
+                                            />
+                                        ) : (
+                                            col
+                                        )}
+                                    </div>
+                                </td>
+                            );
+
                         })}
                     </tr>
                 })}
