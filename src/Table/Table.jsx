@@ -50,7 +50,7 @@ export default function Table(props) {
     const editField = (colIndex, index) => {
         setEditing([colIndex, index])
         setTimeout(() => {
-            const activeInput = document.getElementById("activeInput");
+            const activeInput = document.getElementsByClassName(style.activeInput)[0];
             if (activeInput) {
                 activeInput.focus();
             }
@@ -97,7 +97,7 @@ export default function Table(props) {
                                                 defaultValue={col}
                                                 onChange={(e) => handleChange(e, colIndex, index)}
                                                 contentEditable={true}
-                                                id={"activeInput"}
+                                                className={style.activeInput}
                                             />
                                         ) : (
                                             col

@@ -18,3 +18,7 @@ th {
 .editable{
     background-color: white;
 }
+
+.activeInput{
+    width: 80%;
+}
