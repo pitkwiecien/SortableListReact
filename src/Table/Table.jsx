@@ -1,12 +1,15 @@
 import style from './Table.module.css'
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
+import Button from "../Button/Button";
 
 export default function Table(props) {
     const [values, setValues] = useState(props.values);
     const [lastSortedBy, setLastSortedBy] = useState(0)
     const [lastSortedAsc, setLastSortedAsc] = useState(false)
     const [editing, setEditing] = useState([-1, -1])
+    const [searching, setSearching] = useState(true)
+    const [refresh, setRefresh] = useState(true)
 
     useEffect(() => {
         console.log("lastSortedAsc: " + (lastSortedAsc ? "Yes" : "No"));
@@ -60,55 +63,96 @@ export default function Table(props) {
         setEditing([-1, -1])
     }
 
-    return(
-        <table>
-            <thead>
-                <tr>
-                    {props.headers.map((elem, index) => {
-                        return <th
-                            key={`header-${index}`}
-                            onClick={() => handleHeaderClicked(index)}>
-                            {elem}
-                        </th>
-                    })}
-                </tr>
-            </thead>
-            <tbody>
-                {values.map((row, index) => {
-                    const getBackgroundColour = () => {
-                        const cycles = Math.floor(index / props.cycleColours)
-                        const cycleSpot = cycles % props.colours.length
-                        return props.colours[cycleSpot]
-                    }
-                    return <tr
-                        key={`row-${index}`}
-                        style={{backgroundColor: getBackgroundColour()}}>
-                        {row.map((col, colIndex) => {
-                            // noinspection JSVoidFunctionReturnValueUsed
-                            return (
-                                <td key={`cell-${index}-${colIndex}`}>
-                                    <div onDoubleClick={() => { editField(colIndex, index) }}
-                                         onBlur={() => stopEditing()}>
-                                        {editing[0] === colIndex && editing[1] === index ? (
-                                            <input
-                                                type="text"
-                                                defaultValue={col}
-                                                onChange={(e) => handleChange(e, colIndex, index)}
-                                                contentEditable={true}
-                                                className={style.activeInput}
-                                            />
-                                        ) : (
-                                            col
-                                        )}
-                                    </div>
-                                </td>
-                            );
+    const handleSearchChanged = (index) => {
 
+    }
+
+    const handleSearchToggle = () => {
+        const searchBar = document.getElementsByClassName(style.searchBar)[0]
+        const button = document.getElementsByClassName(style.button)[0]
+        if(searching){
+            searchBar.classList.add(style.invisible)
+        } else {
+            searchBar.classList.remove(style.invisible)
+        }
+        const temp = button.innerHTML
+        button.innerHTML = button.dataset.altText
+        button.dataset.altText = temp
+
+        setRefresh((prevRefresh) => {return !refresh})
+
+        setSearching((prevSearching) => {
+            return !searching
+        })
+    }
+
+    return(
+        <div className={style.tableElement}>
+            <Button
+                onClick={() => {handleSearchToggle()}}
+                altText={"Ukryj Wyszukiwanie"}
+                className={style.button}
+            >
+                Pokaż Wyszukiwanie
+            </Button>
+            <table>
+                <thead>
+                    <tr>
+                        {props.headers.map((elem, index) => {
+                            return <th
+                                key={`header-${index}`}
+                                onClick={() => handleHeaderClicked(index)}>
+                                {elem}
+                            </th>
                         })}
                     </tr>
-                })}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <tr className={style.searchBar}>
+                        {props.headers.map((_, index) => {
+                            return <td>
+                                <input
+                                    onChange={() => handleSearchChanged(index)}
+                                    className={style.inputs}/>
+                            </td>
+                        })}
+                    </tr>
+                    {values.map((row, index) => {
+                        const getBackgroundColour = () => {
+                            const cycles = Math.floor(index / props.cycleColours)
+                            const cycleSpot = cycles % props.colours.length
+                            return props.colours[cycleSpot]
+                        }
+                        return <tr
+                            key={`row-${index}`}
+                            style={{backgroundColor: getBackgroundColour()}}>
+                            {row.map((col, colIndex) => {
+                                // noinspection JSVoidFunctionReturnValueUsed
+                                return (
+                                    <td key={`cell-${index}-${colIndex}`}>
+                                        <div onDoubleClick={() => { editField(colIndex, index) }}
+                                             onBlur={() => stopEditing()}>
+                                            {editing[0] === colIndex && editing[1] === index ? (
+                                                <input
+                                                    type="text"
+                                                    defaultValue={col}
+                                                    onChange={(e) => handleChange(e, colIndex, index)}
+                                                    contentEditable={true}
+                                                    className={style.activeInput}
+                                                />
+                                            ) : (
+                                                col
+                                            )}
+                                        </div>
+                                    </td>
+                                );
+
+                            })}
+                        </tr>
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 }
 

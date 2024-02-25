@@ -22,3 +22,17 @@ th {
 .activeInput{
     width: 80%;
 }
+
+.searchBar{
+    visibility: visible;
+}
+
+.inputs {
+    width: 80%;
+}
+
+.invisible{
+    visibility: collapse;
+}
+
+.button{}
