@@ -1,12 +1,15 @@
 import './Table.module.css'
 import PropTypes from "prop-types";
+import {useState} from "react";
+
 export default function Table(props) {
+    const [values, setValues] = useState(props.values);
     return(
         <table>
             {props.headers.map((elem) => {
                 return <th>{elem}</th>
             })}
-            {props.values.map((row, index) => {
+            {values.map((row, index) => {
                 const getBackgroundColour = () => {
                     const cycles = Math.floor(index / props.cycleColours)
                     const cycleSpot = cycles % props.colours.length
