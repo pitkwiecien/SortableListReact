@@ -1,7 +1,6 @@
 import style from './Table.module.css'
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
-import {type} from "@testing-library/user-event/dist/type";
 
 export default function Table(props) {
     const [values, setValues] = useState(props.values);
@@ -57,8 +56,7 @@ export default function Table(props) {
         }, 0);
     }
 
-    const stopEditing = (e, colIndex, index) => {
-        console.log("a")
+    const stopEditing = () => {
         setEditing([-1, -1])
     }
 
@@ -89,8 +87,8 @@ export default function Table(props) {
                             // noinspection JSVoidFunctionReturnValueUsed
                             return (
                                 <td key={`cell-${index}-${colIndex}`}>
-                                    <div onDoubleClick={(e) => { editField(colIndex, index) }}
-                                         onBlur={(e) => stopEditing(e, colIndex, index)}>
+                                    <div onDoubleClick={() => { editField(colIndex, index) }}
+                                         onBlur={() => stopEditing()}>
                                         {editing[0] === colIndex && editing[1] === index ? (
                                             <input
                                                 type="text"
