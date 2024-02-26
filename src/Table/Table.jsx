@@ -9,7 +9,6 @@ export default function Table(props) {
     const [lastSortedAsc, setLastSortedAsc] = useState(false)
     const [editing, setEditing] = useState([-1, -1])
     const [searching, setSearching] = useState(true)
-    const [refresh, setRefresh] = useState(true)
 
     useEffect(() => {
         console.log("lastSortedAsc: " + (lastSortedAsc ? "Yes" : "No"));
@@ -63,8 +62,21 @@ export default function Table(props) {
         setEditing([-1, -1])
     }
 
-    const handleSearchChanged = (index) => {
+    const handleSearchChanged = (e, index) => {
+        const rows = document.getElementsByTagName("tr")
+        const searchText = e.target.value
 
+        for (let i = 2; i < rows.length; i++) {
+            rows[i].classList.remove("invisible");
+            if(!rows[i].children[index].innerText.startsWith(searchText))
+                rows[i].classList.add("invisible")
+        }
+
+        const searchBars = document.getElementsByClassName(style.inputs)
+        for (let i = 0; i < searchBars.length; i++){
+            if(i !== index)
+                searchBars[i].value = ""
+        }
     }
 
     const handleSearchToggle = () => {
@@ -79,10 +91,8 @@ export default function Table(props) {
         button.innerHTML = button.dataset.altText
         button.dataset.altText = temp
 
-        setRefresh((prevRefresh) => {return !refresh})
-
         setSearching((prevSearching) => {
-            return !searching
+            return !prevSearching
         })
     }
 
@@ -112,7 +122,7 @@ export default function Table(props) {
                         {props.headers.map((_, index) => {
                             return <td>
                                 <input
-                                    onChange={() => handleSearchChanged(index)}
+                                    onChange={(e) => handleSearchChanged(e, index)}
                                     className={style.inputs}/>
                             </td>
                         })}
@@ -146,7 +156,6 @@ export default function Table(props) {
                                         </div>
                                     </td>
                                 );
-
                             })}
                         </tr>
                     })}
