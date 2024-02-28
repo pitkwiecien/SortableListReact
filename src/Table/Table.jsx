@@ -8,7 +8,7 @@ export default function Table(props) {
     const [lastSortedBy, setLastSortedBy] = useState(0)
     const [lastSortedAsc, setLastSortedAsc] = useState(false)
     const [editing, setEditing] = useState([-1, -1])
-    const [searching, setSearching] = useState(true)
+    const [searching, setSearching] = useState(false)
 
     useEffect(() => {
         console.log("lastSortedAsc: " + (lastSortedAsc ? "Yes" : "No"));
@@ -118,7 +118,7 @@ export default function Table(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr className={style.searchBar}>
+                    <tr className={style.searchBar + " " + style.invisible}>
                         {props.headers.map((_, index) => {
                             return <td>
                                 <input

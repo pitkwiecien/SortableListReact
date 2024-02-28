@@ -1,5 +1,6 @@
 import './App.css';
 import Table from "../Table/Table";
+import CSVButton from '../CSVButton/CSVButton';
 
 function App() {
     const headers = [
@@ -27,6 +28,7 @@ function App() {
     return (
       <div className={"App"}>
         <Table headers={headers} values={values} colours={["lightgray", "lightblue", "lightgreen"]} cycleColours={4}/>
+        <CSVButton csvData={values}>Download CSV</CSVButton>
       </div>
     );
 }
